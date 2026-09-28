@@ -3,12 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VELUUME • B2B CRM</title>
+<title>VELUUME • CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<!-- SDKs Firebase Cloud Firestore (Compat CDN pour GitHub Pages) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <style>
   :root {
@@ -25,7 +21,6 @@
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--vel-cream); color: var(--vel-dark); padding-bottom: 90px; }
 
-  /* En-tête */
   .top-bar {
     position: sticky; top: 0; z-index: 50;
     background: var(--vel-cream); border-bottom: 1px solid var(--vel-border);
@@ -34,7 +29,6 @@
   .brand-logo { font-size: 20px; font-weight: 800; letter-spacing: 2px; color: var(--vel-dark); }
   .tag-season { font-size: 10px; font-weight: 700; background: var(--vel-gradient); color: #fff; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
 
-  /* Stats */
   .quick-stats { display: flex; gap: 8px; padding: 14px 18px 8px 18px; }
   .stat-card {
     flex: 1; background: #fff; border: 1px solid var(--vel-border); border-radius: 14px;
@@ -43,16 +37,14 @@
   .stat-num { font-size: 16px; font-weight: 800; color: var(--vel-orange); }
   .stat-lbl { font-size: 9px; font-weight: 700; color: var(--vel-gray); text-transform: uppercase; margin-top: 2px; }
 
-  /* Bouton Ajouter Boutique */
   .btn-add-store {
-    margin: 8px 18px 12px 18px; height: 44px; background: #fff;
+    margin: 8px 18px 12px 18px; height: 46px; background: #fff;
     border: 2px dashed var(--vel-orange); border-radius: 14px; color: var(--vel-orange);
     font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center;
     gap: 8px; cursor: pointer;
   }
   .btn-add-store:active { background: #FFF4EE; }
 
-  /* Filtres */
   .filters { padding: 0 18px 12px 18px; display: flex; flex-direction: column; gap: 10px; }
   select, input[type="text"], input[type="number"] {
     width: 100%; height: 46px; border-radius: 12px; border: 1px solid var(--vel-border);
@@ -60,7 +52,6 @@
   }
   select:focus, input:focus { border-color: var(--vel-orange); }
 
-  /* Liste des boutiques */
   .list-view { padding: 0 18px; display: flex; flex-direction: column; gap: 10px; }
   .store-item {
     background: #fff; border: 1px solid var(--vel-border); border-radius: 16px;
@@ -76,7 +67,6 @@
     background: #FFF2EB; color: var(--vel-orange);
   }
 
-  /* Vue détail */
   .detail-view {
     display: none; position: fixed; inset: 0; background: var(--vel-cream);
     z-index: 100; overflow-y: auto; padding: 18px 18px 120px 18px;
@@ -101,7 +91,6 @@
   .form-group:last-child { margin-bottom: 0; }
   .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--vel-gray); margin-bottom: 4px; }
 
-  /* Grille Tarif */
   .price-summary {
     display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
     background: #FFF8F3; border: 1px solid #FFE4D6; border-radius: 12px; padding: 12px; margin-top: 10px;
@@ -110,7 +99,6 @@
   .ps-num { font-size: 16px; font-weight: 800; color: var(--vel-orange); }
   .ps-lbl { font-size: 9px; font-weight: 700; color: var(--vel-gray); text-transform: uppercase; margin-top: 2px; }
 
-  /* Boutons interactifs */
   .toggle-row { display: flex; gap: 6px; margin-top: 6px; }
   .t-btn {
     flex: 1; padding: 10px 4px; border-radius: 10px; border: 1px solid var(--vel-border);
@@ -121,7 +109,6 @@
     background: var(--vel-orange); color: #fff; border-color: var(--vel-orange);
   }
 
-  /* Bouton PDF Contrat */
   .btn-contract {
     width: 100%; height: 48px; background: #fff; border: 2px solid var(--vel-dark);
     border-radius: 14px; font-size: 13px; font-weight: 800; color: var(--vel-dark);
@@ -130,30 +117,28 @@
   }
   .btn-contract:active { background: #F0EAE1; }
 
-  /* Bouton Supprimer */
   .btn-delete {
     width: 100%; height: 44px; background: transparent; border: 1px solid var(--vel-danger);
     border-radius: 14px; font-size: 13px; font-weight: 700; color: var(--vel-danger);
     margin-top: 12px; cursor: pointer;
   }
 
-  /* Vue Contrat Plein Écran */
   #contractView {
     display: none; position: fixed; inset: 0; background: #fff;
     z-index: 300; overflow-y: auto; padding: 24px; color: #1A1A1A;
   }
 
-  /* Barre Fixe Bas */
   .bottom-save-bar {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: #fff; border-top: 1px solid var(--vel-border);
     padding: 12px 18px; z-index: 150;
   }
   .btn-save-mobile {
-    width: 100%; height: 48px; background: var(--vel-gradient); border: none;
-    border-radius: 14px; color: #fff; font-size: 14px; font-weight: 800;
+    width: 100%; height: 50px; background: var(--vel-gradient); border: none;
+    border-radius: 14px; color: #fff; font-size: 15px; font-weight: 800;
     cursor: pointer; box-shadow: 0 4px 12px rgba(242,92,59,0.3);
   }
+
   .save-toast {
     position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
     background: #1A1A1A; color: #fff; padding: 10px 18px; border-radius: 20px;
@@ -163,14 +148,13 @@
 </head>
 <body>
 
-<div class="save-toast" id="toast">✓ Enregistré dans le Cloud</div>
+<div class="save-toast" id="toast">✓ Enregistré</div>
 
 <div class="top-bar">
   <div class="brand-logo">VELUUME</div>
   <div class="tag-season">ÉTÉ 2026</div>
 </div>
 
-<!-- VUE LISTE -->
 <div id="listView">
   <div class="quick-stats">
     <div class="stat-card">
@@ -183,7 +167,7 @@
     </div>
     <div class="stat-card">
       <div class="stat-num" id="stat-ca">0 €</div>
-      <div class="stat-lbl">Total TTC B2B</div>
+      <div class="stat-lbl">Total TTC</div>
     </div>
   </div>
 
@@ -194,22 +178,19 @@
   <div class="filters">
     <select id="regSelect" onchange="renderList()">
       <option value="ALL">📍 Toutes les régions</option>
-      <option value="Corse">1. Corse (Score 100)</option>
-      <option value="Provence-Alpes-Côte d'Azur">2. PACA (Riviera & Provence)</option>
-      <option value="Poitou-Charentes">3. Poitou-Charentes (Score 94)</option>
-      <option value="Languedoc-Roussillon">4. Languedoc-Roussillon (Score 93)</option>
-      <option value="Limousin">5. Limousin (Score 93)</option>
-      <option value="Bourgogne">6. Bourgogne (Score 90)</option>
+      <option value="Corse">1. Corse</option>
+      <option value="Provence-Alpes-Côte d'Azur">2. PACA</option>
+      <option value="Poitou-Charentes">3. Poitou-Charentes</option>
+      <option value="Languedoc-Roussillon">4. Languedoc-Roussillon</option>
+      <option value="Limousin">5. Limousin</option>
+      <option value="Bourgogne">6. Bourgogne</option>
     </select>
-    <input type="text" id="srch" placeholder="🔍 Rechercher enseigne, ville..." oninput="renderList()">
+    <input type="text" id="srch" placeholder="🔍 Rechercher boutique, ville..." oninput="renderList()">
   </div>
 
-  <div class="list-view" id="storesContainer">
-    <div style="text-align:center; padding:30px; font-size:13px; color:#888;">Chargement de la base de données...</div>
-  </div>
+  <div class="list-view" id="storesContainer"></div>
 </div>
 
-<!-- VUE DÉTAIL -->
 <div class="detail-view" id="detailView">
   <div class="detail-header">
     <div class="btn-back" onclick="closeDetail()">← Retour liste</div>
@@ -221,6 +202,10 @@
     <div class="form-group">
       <label>Nom de l'enseigne</label>
       <input type="text" id="mName" placeholder="Ex: Concept Store...">
+    </div>
+    <div class="form-group">
+      <label>SIRET Commerçant Revendeur</label>
+      <input type="text" id="mSiret" placeholder="Numéro SIRET (14 chiffres)">
     </div>
     <div class="form-group">
       <label>Région</label>
@@ -246,7 +231,7 @@
       <input type="text" id="mType" placeholder="Concept store, Paillote, etc.">
     </div>
     <div class="form-group">
-      <label>Contact / Tél / Responsable</label>
+      <label>Contact / Téléphone</label>
       <input type="text" id="mContact" placeholder="06... / Nom du gérant">
     </div>
   </div>
@@ -256,21 +241,21 @@
     <div class="form-group">
       <label>Mode de commande</label>
       <div class="toggle-row">
-        <div class="t-btn" id="mode-20" onclick="setMode('pack20')">Pack 20 + Présentoir</div>
+        <div class="t-btn selected" id="mode-20" onclick="setMode('pack20')">Pack 20 + Présentoir</div>
         <div class="t-btn" id="mode-unit" onclick="setMode('unit')">À l'unité (sur-mesure)</div>
       </div>
     </div>
     <div class="form-group" style="margin-top: 10px;">
       <label>Quantité commandée</label>
-      <input type="number" id="mQty" oninput="recalc()">
+      <input type="number" id="mQty" value="20" oninput="recalc()">
     </div>
     <div class="price-summary">
       <div class="ps-block">
-        <div class="ps-num" id="mTotalAchatTTC">0 €</div>
+        <div class="ps-num" id="mTotalAchatTTC">140.00 €</div>
         <div class="ps-lbl">Achat B2B TTC (7 €/u)</div>
       </div>
       <div class="ps-block">
-        <div class="ps-num" id="mTotalReventeTTC">0 €</div>
+        <div class="ps-num" id="mTotalReventeTTC">240.00 €</div>
         <div class="ps-lbl">Revente TTC (12 €/u)</div>
       </div>
     </div>
@@ -279,7 +264,7 @@
   <div class="d-card">
     <div class="d-card-title">3. Présentoir de comptoir carton</div>
     <div class="toggle-row">
-      <div class="t-btn" id="plv-y" onclick="setPLV(true)">OUI (Livré)</div>
+      <div class="t-btn selected" id="plv-y" onclick="setPLV(true)">OUI (Livré)</div>
       <div class="t-btn" id="plv-n" onclick="setPLV(false)">NON (Sans)</div>
     </div>
   </div>
@@ -287,21 +272,21 @@
   <div class="d-card">
     <div class="d-card-title">4. Paiement avant livraison</div>
     <div class="toggle-row">
-      <div class="t-btn" id="pay-0" onclick="setPay(0)">0% payé</div>
+      <div class="t-btn selected" id="pay-0" onclick="setPay(0)">0% payé</div>
       <div class="t-btn" id="pay-50" onclick="setPay(50)">50% payé</div>
       <div class="t-btn" id="pay-100" onclick="setPay(100)">100% payé</div>
     </div>
   </div>
 
   <div class="d-card">
-    <div class="d-card-title">5. Notes commerciales & Contrat</div>
+    <div class="d-card-title">5. Conditionnement / Commentaire avant contrat</div>
     <div class="form-group">
-      <label>Commentaires / Suivi</label>
-      <input type="text" id="mNotes" placeholder="Notes de visite...">
+      <label>Commentaire de conditionnement (ex: 1 Présentoir de comptoir carton offert)</label>
+      <input type="text" id="mNotes" placeholder="Texte à afficher dans le conditionnement...">
     </div>
     
     <button class="btn-contract" onclick="showContractView()">
-      📄 Générer le Contrat d'Engagement (PDF)
+      📄 Générer le Bon de Commande (PDF)
     </button>
   </div>
 
@@ -311,10 +296,10 @@
 </div>
 
 <div class="bottom-save-bar" id="saveBar" style="display:none;">
-  <button class="btn-save-mobile" onclick="saveStoreData()">Enregistrer dans le Cloud</button>
+  <button class="btn-save-mobile" onclick="saveStoreData()">Enregistrer la boutique</button>
 </div>
 
-<!-- VUE CONTRAT SIGNABLE -->
+<!-- VUE DOCUMENT / FACTURE -->
 <div id="contractView">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
     <button onclick="closeContractView()" style="background:#f0f0f0; border:none; padding:8px 14px; border-radius:20px; font-weight:700; cursor:pointer;">← Retour fiche</button>
@@ -324,67 +309,11 @@
 </div>
 
 <script>
-// Configuration Firebase Veluume
-const firebaseConfig = {
-  apiKey: "AIzaSyCBoWhYb_Aoei7848zVaPDAyttCMiBsCMw",
-  authDomain: "veluume-app.firebaseapp.com",
-  projectId: "veluume-app",
-  storageBucket: "veluume-app.firebasestorage.app",
-  messagingSenderId: "1040635973915",
-  appId: "1:1040635973915:web:accad846de8fd64c2a03be",
-  measurementId: "G-CSX478G2KC"
-};
-
-// Initialisation Firebase & Firestore
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-const defaultStores = [
-  { id: "1", name: "cōcō concept store", region: "Corse", city: "Ajaccio", address: "Av. du Premier Consul, Ajaccio", type: "Concept Store Mode", qty: 20, plv: true, payment: 50, contact: "06 12 34 56 78", notes: "Comptoir caisse" },
-  { id: "2", name: "MOOD Ajaccio", region: "Corse", city: "Ajaccio", address: "Rue Fesch, Ajaccio", type: "Prêt-à-porter", qty: 40, plv: true, payment: 100, contact: "Direction", notes: "Rue piétonne" },
-  { id: "3", name: "Boutique Aimée", region: "Corse", city: "Ajaccio", address: "Rue des Trois Maries, Ajaccio", type: "Cadeaux", qty: 20, plv: true, payment: 0, contact: "", notes: "Achat d'impulsion" },
-  { id: "4", name: "Paillote Sanguinaires", region: "Corse", city: "Ajaccio", address: "Route des Sanguinaires", type: "Beach Club", qty: 20, plv: true, payment: 100, contact: "", notes: "Bar de plage" },
-  { id: "5", name: "Concept Store Haute Ville", region: "Corse", city: "Porto-Vecchio", address: "Haute Ville", type: "Créateurs", qty: 20, plv: true, payment: 50, contact: "", notes: "Touristes été" },
-  { id: "6", name: "Boutique Port / Marina", region: "Corse", city: "Bonifacio", address: "Quai Comparetti", type: "Mode Chic", qty: 20, plv: true, payment: 50, contact: "", notes: "Quai principal" },
-  { id: "7", name: "Boutique Citadelle", region: "Corse", city: "Calvi", address: "Citadelle", type: "Tourisme", qty: 15, plv: false, payment: 0, contact: "", notes: "Unitaire sans PLV" },
-  { id: "8", name: "Mon Œil", region: "Provence-Alpes-Côte d'Azur", city: "Nice", address: "Rue Bonaparte", type: "Mode", qty: 20, plv: true, payment: 50, contact: "", notes: "Quartier Port" },
-  { id: "9", name: "Mellli Mello", region: "Provence-Alpes-Côte d'Azur", city: "Nice", address: "Rue Préfecture", type: "Accessoires", qty: 20, plv: true, payment: 0, contact: "", notes: "Vieux-Nice" },
-  { id: "10", name: "Le Shop 17", region: "Provence-Alpes-Côte d'Azur", city: "Cannes", address: "Rue Notre-Dame", type: "Concept Store", qty: 20, plv: true, payment: 50, contact: "", notes: "Proche Croisette" },
-  { id: "11", name: "Mood Concept Store", region: "Provence-Alpes-Côte d'Azur", city: "Saint-Tropez", address: "Place Celli", type: "Beachwear", qty: 20, plv: true, payment: 100, contact: "", notes: "Clientèle prestige" },
-  { id: "12", name: "Natives Concept Store", region: "Provence-Alpes-Côte d'Azur", city: "Aix-en-Provence", address: "Rue Fauchier", type: "Créateurs", qty: 20, plv: true, payment: 0, contact: "", notes: "Centre chaud" },
-  { id: "13", name: "Etc... A Concept Store", region: "Poitou-Charentes", city: "La Rochelle", address: "Rue Saint-Nicolas", type: "Artisanat", qty: 20, plv: true, payment: 50, contact: "", notes: "Vieux-Port" },
-  { id: "14", name: "Boutique Plage St-Martin", region: "Poitou-Charentes", city: "Île de Ré", address: "Port St-Martin", type: "Beach Chic", qty: 20, plv: true, payment: 100, contact: "", notes: "Île de Ré" },
-  { id: "15", name: "Foliae Concept Store", region: "Poitou-Charentes", city: "Poitiers", address: "Rue Gambetta", type: "Design", qty: 10, plv: false, payment: 0, contact: "", notes: "Unitaire test" },
-  { id: "16", name: "Mazette Shop", region: "Languedoc-Roussillon", city: "Montpellier", address: "Écusson", type: "Déco d'Été", qty: 20, plv: true, payment: 50, contact: "", notes: "Zone piétonne" },
-  { id: "17", name: "Boutique Remparts", region: "Languedoc-Roussillon", city: "Aigues-Mortes", address: "Intra-muros", type: "Accessoires", qty: 20, plv: true, payment: 0, contact: "", notes: "Touristique" },
-  { id: "18", name: "La Manufacture Française", region: "Limousin", city: "Limoges", address: "Rue Boucherie", type: "Objets Cadeaux", qty: 10, plv: false, payment: 0, contact: "", notes: "Unitaire test" },
-  { id: "19", name: "Concept Store Centre", region: "Limousin", city: "Brive", address: "Centre piéton", type: "Maison", qty: 10, plv: false, payment: 0, contact: "", notes: "Unitaire test" },
-  { id: "20", name: "Concept Store Hospices", region: "Bourgogne", city: "Beaune", address: "Place Carnot", type: "Art de Vivre", qty: 10, plv: false, payment: 100, contact: "", notes: "Unitaire test" }
-];
-
-let stores = [];
+let stores = JSON.parse(localStorage.getItem('veluume_stores')) || [];
 let activeStoreId = null;
 
-// Synchronisation temps réel avec Firebase Firestore
-db.collection("stores").onSnapshot((snapshot) => {
-  if (!snapshot.empty) {
-    let cloudStores = [];
-    snapshot.forEach(doc => {
-      cloudStores.push({ id: doc.id, ...doc.data() });
-    });
-    stores = cloudStores;
-    renderList();
-  } else {
-    // Premier lancement : initialise la collection avec les boutiques par défaut
-    defaultStores.forEach(s => {
-      db.collection("stores").doc(s.id).set(s);
-    });
-  }
-}, (error) => {
-  console.warn("Erreur Firestore, passage en sauvegarde locale :", error);
-  stores = JSON.parse(localStorage.getItem('veluume_stores')) || defaultStores;
-  renderList();
-});
+// Compteur de facture incrémental sauvegardé
+let invoiceCounter = parseInt(localStorage.getItem('veluume_invoice_counter')) || 1;
 
 function updateHeaderStats() {
   const count = stores.length;
@@ -392,7 +321,7 @@ function updateHeaderStats() {
   const totalAchatTTC = fans * 7.00;
   document.getElementById('stat-shops').innerText = count;
   document.getElementById('stat-fans').innerText = fans;
-  document.getElementById('stat-ca').innerText = totalAchatTTC.toLocaleString('fr-FR') + ' €';
+  document.getElementById('stat-ca').innerText = totalAchatTTC.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
 }
 
 function renderList() {
@@ -408,7 +337,12 @@ function renderList() {
   });
 
   if (filtered.length === 0) {
-    c.innerHTML = '<div style="text-align:center; padding:30px; font-size:13px; color:#888;">Aucune boutique trouvée</div>';
+    c.innerHTML = `
+      <div style="text-align:center; padding:50px 20px; color:#888;">
+        <div style="font-size:32px; margin-bottom:10px;">📦</div>
+        <strong>Aucune boutique enregistrée</strong><br>
+        <span style="font-size:12px;">Cliquez sur « + Ajouter une nouvelle boutique » ci-dessus.</span>
+      </div>`;
   }
 
   filtered.forEach(s => {
@@ -418,7 +352,7 @@ function renderList() {
     d.innerHTML = `
       <div>
         <div class="s-name">${s.name}</div>
-        <div class="s-sub">${s.city} • ${s.type}</div>
+        <div class="s-sub">${s.city || s.region} • ${s.type || 'Boutique'}</div>
         <div class="s-badge">${s.qty} éventails • ${s.payment}% payé • ${s.plv ? 'Avec présentoir' : 'Sans prés.'}</div>
       </div>
       <div style="color:var(--vel-orange); font-size:18px; font-weight:800;">›</div>
@@ -435,13 +369,14 @@ function openDetail(id) {
 
   document.getElementById('detRegionTag').innerText = s.region;
   document.getElementById('mName').value = s.name;
+  document.getElementById('mSiret').value = s.siret || '';
   document.getElementById('mRegion').value = s.region;
-  document.getElementById('mCity').value = s.city;
-  document.getElementById('mAddress').value = s.address;
-  document.getElementById('mType').value = s.type;
+  document.getElementById('mCity').value = s.city || '';
+  document.getElementById('mAddress').value = s.address || '';
+  document.getElementById('mType').value = s.type || '';
   document.getElementById('mContact').value = s.contact || '';
   document.getElementById('mQty').value = s.qty;
-  document.getElementById('mNotes').value = s.notes || '';
+  document.getElementById('mNotes').value = s.notes || (s.plv ? '1 Présentoir de comptoir carton inclus' : '');
 
   if (s.qty % 20 === 0 && s.plv) {
     setMode('pack20');
@@ -464,13 +399,14 @@ function createNewStore() {
   activeStoreId = "store_" + Date.now();
   document.getElementById('detRegionTag').innerText = 'Nouvelle Boutique';
   document.getElementById('mName').value = '';
+  document.getElementById('mSiret').value = '';
   document.getElementById('mRegion').value = 'Corse';
   document.getElementById('mCity').value = '';
   document.getElementById('mAddress').value = '';
   document.getElementById('mType').value = 'Concept Store Mode';
   document.getElementById('mContact').value = '';
   document.getElementById('mQty').value = 20;
-  document.getElementById('mNotes').value = '';
+  document.getElementById('mNotes').value = '1 Présentoir de comptoir carton inclus';
 
   setMode('pack20');
   setPLV(true);
@@ -519,6 +455,12 @@ function setPLV(val) {
   curPLV = val;
   document.getElementById('plv-y').className = 't-btn' + (val ? ' selected' : '');
   document.getElementById('plv-n').className = 't-btn' + (!val ? ' selected' : '');
+  const noteField = document.getElementById('mNotes');
+  if (val && (!noteField.value || noteField.value === 'Sans présentoir')) {
+    noteField.value = '1 Présentoir de comptoir carton inclus';
+  } else if (!val && noteField.value === '1 Présentoir de comptoir carton inclus') {
+    noteField.value = 'Sans présentoir';
+  }
 }
 
 let curPay = 0;
@@ -531,6 +473,7 @@ function setPay(val) {
 
 function saveStoreData() {
   const name = document.getElementById('mName').value.trim() || 'Boutique sans nom';
+  const siret = document.getElementById('mSiret').value.trim();
   const region = document.getElementById('mRegion').value;
   const city = document.getElementById('mCity').value.trim();
   const address = document.getElementById('mAddress').value.trim();
@@ -540,42 +483,28 @@ function saveStoreData() {
   const notes = document.getElementById('mNotes').value.trim();
 
   const storeData = {
-    name, region, city, address, type, contact, qty,
+    name, siret, region, city, address, type, contact, qty,
     plv: curPLV, payment: curPay, notes
   };
 
-  // Sauvegarde Firebase Firestore
-  db.collection("stores").doc(activeStoreId).set(storeData).then(() => {
-    showToast('✓ Enregistré dans le Cloud');
-    setTimeout(() => { closeDetail(); }, 600);
-  }).catch((err) => {
-    // Secours LocalStorage en cas d'erreur réseau ou règles
-    console.error("Erreur Cloud:", err);
-    let existing = stores.find(x => x.id === activeStoreId);
-    if (existing) {
-      Object.assign(existing, storeData);
-    } else {
-      stores.unshift({ id: activeStoreId, ...storeData });
-    }
-    localStorage.setItem('veluume_stores', JSON.stringify(stores));
-    renderList();
-    showToast('✓ Enregistré en local');
-    setTimeout(() => { closeDetail(); }, 600);
-  });
+  let existingIndex = stores.findIndex(x => x.id === activeStoreId);
+  if (existingIndex >= 0) {
+    stores[existingIndex] = { id: activeStoreId, ...storeData };
+  } else {
+    stores.unshift({ id: activeStoreId, ...storeData });
+  }
+  localStorage.setItem('veluume_stores', JSON.stringify(stores));
+
+  showToast('✓ Enregistré');
+  closeDetail();
 }
 
 function deleteCurrentStore() {
   if (confirm('Confirmer la suppression de cette boutique ?')) {
-    db.collection("stores").doc(activeStoreId).delete().then(() => {
-      showToast('Boutique supprimée');
-      closeDetail();
-    }).catch(() => {
-      stores = stores.filter(x => x.id !== activeStoreId);
-      localStorage.setItem('veluume_stores', JSON.stringify(stores));
-      renderList();
-      showToast('Boutique supprimée');
-      closeDetail();
-    });
+    stores = stores.filter(x => x.id !== activeStoreId);
+    localStorage.setItem('veluume_stores', JSON.stringify(stores));
+    showToast('Boutique supprimée');
+    closeDetail();
   }
 }
 
@@ -588,25 +517,40 @@ function showToast(msg) {
 
 function showContractView() {
   const name = document.getElementById('mName').value || 'Boutique';
+  const siretRevendeur = document.getElementById('mSiret').value || 'Non renseigné';
   const address = document.getElementById('mAddress').value || 'Non renseignée';
   const city = document.getElementById('mCity').value || '';
   const contact = document.getElementById('mContact').value || 'Non renseigné';
   const qty = parseInt(document.getElementById('mQty').value) || 0;
+  
+  // Calculs financiers
+  const puHT = 5.83;
+  const totalHT = (qty * puHT).toFixed(2);
   const totalTTC = (qty * 7.00).toFixed(2);
+  const tva20 = (totalTTC - totalHT).toFixed(2);
+  
   const payPercent = curPay;
   const payPaid = ((totalTTC * payPercent) / 100).toFixed(2);
   const payRemaining = (totalTTC - payPaid).toFixed(2);
-  const plvText = curPLV ? 'OUI (1 Présentoir de comptoir carton inclus)' : 'NON (Sans présentoir)';
+  
+  // Conditionnement : reprend le commentaire si présentoir, sinon "Sans présentoir"
+  const commentInput = document.getElementById('mNotes').value.trim();
+  const condText = curPLV ? (commentInput || '1 Présentoir de comptoir carton inclus') : 'Sans présentoir';
+
+  // Numéro de facture incrémental
+  const numFacture = "VEL-" + String(invoiceCounter).padStart(4, '0');
+  invoiceCounter++;
+  localStorage.setItem('veluume_invoice_counter', invoiceCounter);
 
   const contractHTML = `
     <div style="border-bottom:2px solid #F25C3B; padding-bottom:15px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:flex-start;">
       <div>
-        <div style="font-size:24px; font-weight:900; letter-spacing:2px; color:#F25C3B;">VELUUME</div>
-        <div style="font-size:11px; text-transform:uppercase; color:#777; margin-top:2px;">Éventails de Collection • cltagora@gmail.com</div>
+        <div style="font-size:26px; font-weight:900; letter-spacing:2px; color:#F25C3B;">VELUUME</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-size:14px; font-weight:800; text-transform:uppercase;">BON DE COMMANDE B2B</div>
-        <div style="font-size:12px; color:#666;">Date : ${new Date().toLocaleDateString('fr-FR')}</div>
+        <div style="font-size:16px; font-weight:800; text-transform:uppercase;">BON DE COMMANDE</div>
+        <div style="font-size:12px; color:#666; margin-top:2px;">Date : ${new Date().toLocaleDateString('fr-FR')}</div>
+        <div style="font-size:13px; font-weight:700; color:#F25C3B; margin-top:2px;">Facture N° ${numFacture}</div>
       </div>
     </div>
 
@@ -614,12 +558,13 @@ function showContractView() {
       <div style="flex:1; border:1px solid #e0e0e0; border-radius:8px; padding:12px; background:#fafafa; font-size:12px;">
         <strong style="color:#F25C3B; text-transform:uppercase; font-size:10px; display:block; margin-bottom:4px;">Fournisseur</strong>
         <strong>VELUUME</strong><br>
-        Site : www.veluume.com<br>
-        Email : cltagora@gmail.com
+        SIRET : 00000000<br>
+        Site : www.veluume.com
       </div>
       <div style="flex:1; border:1px solid #e0e0e0; border-radius:8px; padding:12px; background:#fafafa; font-size:12px;">
         <strong style="color:#F25C3B; text-transform:uppercase; font-size:10px; display:block; margin-bottom:4px;">Commerçant Revendeur</strong>
         <strong>${name}</strong><br>
+        SIRET : ${siretRevendeur}<br>
         Adresse : ${address}, ${city}<br>
         Contact : ${contact}
       </div>
@@ -628,26 +573,30 @@ function showContractView() {
     <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:12px;">
       <thead>
         <tr style="background:#1a1a1a; color:#fff;">
-          <th style="padding:8px 10px; text-align:left; font-size:10px; text-transform:uppercase;">Désignation</th>
+          <th style="padding:8px 10px; text-align:left; font-size:10px; text-transform:uppercase;">Description</th>
           <th style="padding:8px 10px; text-align:left; font-size:10px; text-transform:uppercase;">Conditionnement</th>
           <th style="padding:8px 10px; text-align:center; font-size:10px; text-transform:uppercase;">Qté</th>
+          <th style="padding:8px 10px; text-align:right; font-size:10px; text-transform:uppercase;">P.U. HT</th>
           <th style="padding:8px 10px; text-align:right; font-size:10px; text-transform:uppercase;">P.U. TTC</th>
           <th style="padding:8px 10px; text-align:right; font-size:10px; text-transform:uppercase;">Total TTC</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td style="padding:10px; border-bottom:1px solid #eee;"><strong>Éventail Veluume (Blind Box)</strong><br><small style="color:#666;">Structure bois naturel, motifs graphiques</small></td>
-          <td style="padding:10px; border-bottom:1px solid #eee;">${plvText}</td>
+          <td style="padding:10px; border-bottom:1px solid #eee;"><strong>Éventail Veluume (Blind Box)</strong></td>
+          <td style="padding:10px; border-bottom:1px solid #eee;">${condText}</td>
           <td style="padding:10px; border-bottom:1px solid #eee; text-align:center;">${qty}</td>
+          <td style="padding:10px; border-bottom:1px solid #eee; text-align:right;">${puHT.toFixed(2)} €</td>
           <td style="padding:10px; border-bottom:1px solid #eee; text-align:right;">7,00 €</td>
           <td style="padding:10px; border-bottom:1px solid #eee; text-align:right; font-weight:700;">${totalTTC} €</td>
         </tr>
       </tbody>
     </table>
 
-    <div style="width:100%; max-width:280px; margin-left:auto; margin-bottom:25px; font-size:12px;">
-      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Total Commande TTC :</span> <span>${totalTTC} €</span></div>
+    <div style="width:100%; max-width:300px; margin-left:auto; margin-bottom:25px; font-size:12px;">
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Total Commande HT :</span> <span>${totalHT} €</span></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>TVA (20%) :</span> <span>${tva20} €</span></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; font-weight:800; font-size:13px; border-top:1px solid #ddd;"><span>Total Commande TTC :</span> <span>${totalTTC} €</span></div>
       <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Acompte réglé (${payPercent}%) :</span> <span>${payPaid} €</span></div>
       <div style="display:flex; justify-content:space-between; padding:6px 0; font-weight:800; font-size:14px; border-top:1px solid #1a1a1a; color:#F25C3B;"><span>Solde restant dû :</span> <span>${payRemaining} €</span></div>
     </div>
@@ -676,6 +625,8 @@ function showContractView() {
 function closeContractView() {
   document.getElementById('contractView').style.display = 'none';
 }
+
+renderList();
 </script>
 </body>
 </html>
