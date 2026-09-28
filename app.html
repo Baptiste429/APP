@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VELUUME • B2B CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vel-orange: #F25C3B;
+    --vel-peach: #FFAE85;
+    --vel-cream: #FAF6F0;
+    --vel-dark: #1A1A1A;
+    --vel-gray: #7A7A7A;
+    --vel-border: #EFE7DC;
+    --vel-danger: #DC2626;
+    --vel-gradient: linear-gradient(135deg, #F25C3B 0%, #FFAE85 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--vel-cream); color: var(--vel-dark); padding-bottom: 90px; }
+
+  /* En-tête */
+  .top-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--vel-cream); border-bottom: 1px solid var(--vel-border);
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .brand-logo { font-size: 20px; font-weight: 800; letter-spacing: 2px; color: var(--vel-dark); }
+  .tag-season { font-size: 10px; font-weight: 700; background: var(--vel-gradient); color: #fff; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+
+  /* Stats */
+  .quick-stats { display: flex; gap: 8px; padding: 14px 18px 8px 18px; }
+  .stat-card {
+    flex: 1; background: #fff; border: 1px solid var(--vel-border); border-radius: 14px;
+    padding: 10px; text-align: center; box-shadow: 0 2px 4px rgba(242,92,59,0.04);
+  }
+  .stat-num { font-size: 16px; font-weight: 800; color: var(--vel-orange); }
+  .stat-lbl { font-size: 9px; font-weight: 700; color: var(--vel-gray); text-transform: uppercase; margin-top: 2px; }
+
+  /* Bouton Ajouter Boutique */
+  .btn-add-store {
+    margin: 8px 18px 12px 18px; height: 44px; background: #fff;
+    border: 2px dashed var(--vel-orange); border-radius: 14px; color: var(--vel-orange);
+    font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    gap: 8px; cursor: pointer;
+  }
+  .btn-add-store:active { background: #FFF4EE; }
+
+  /* Filtres */
+  .filters { padding: 0 18px 12px 18px; display: flex; flex-direction: column; gap: 10px; }
+  select, input[type="text"], input[type="number"] {
+    width: 100%; height: 46px; border-radius: 12px; border: 1px solid var(--vel-border);
+    background: #fff; font-size: 14px; color: var(--vel-dark); padding: 0 14px; outline: none;
+  }
+  select:focus, input:focus { border-color: var(--vel-orange); }
+
+  /* Liste des boutiques */
+  .list-view { padding: 0 18px; display: flex; flex-direction: column; gap: 10px; }
+  .store-item {
+    background: #fff; border: 1px solid var(--vel-border); border-radius: 16px;
+    padding: 16px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02); cursor: pointer;
+  }
+  .store-item:active { transform: scale(0.98); background: #FFFBF7; }
+  .s-name { font-size: 15px; font-weight: 700; color: var(--vel-dark); }
+  .s-sub { font-size: 12px; color: var(--vel-gray); margin-top: 3px; }
+  .s-badge {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 3px 8px; border-radius: 8px; margin-top: 6px;
+    background: #FFF2EB; color: var(--vel-orange);
+  }
+
+  /* Vue détail */
+  .detail-view {
+    display: none; position: fixed; inset: 0; background: var(--vel-cream);
+    z-index: 100; overflow-y: auto; padding: 18px 18px 120px 18px;
+  }
+  .detail-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .btn-back {
+    display: flex; align-items: center; font-size: 13px; font-weight: 700;
+    color: var(--vel-orange); background: #fff; border: 1px solid var(--vel-border);
+    padding: 8px 14px; border-radius: 20px; cursor: pointer;
+  }
+
+  .d-card {
+    background: #fff; border: 1px solid var(--vel-border); border-radius: 18px;
+    padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  }
+  .d-card-title {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--vel-orange); margin-bottom: 12px;
+  }
+
+  .form-group { margin-bottom: 12px; }
+  .form-group:last-child { margin-bottom: 0; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--vel-gray); margin-bottom: 4px; }
+
+  /* Grille Tarif */
+  .price-summary {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    background: #FFF8F3; border: 1px solid #FFE4D6; border-radius: 12px; padding: 12px; margin-top: 10px;
+  }
+  .ps-block { text-align: center; }
+  .ps-num { font-size: 16px; font-weight: 800; color: var(--vel-orange); }
+  .ps-lbl { font-size: 9px; font-weight: 700; color: var(--vel-gray); text-transform: uppercase; margin-top: 2px; }
+
+  /* Boutons interactifs */
+  .toggle-row { display: flex; gap: 6px; margin-top: 6px; }
+  .t-btn {
+    flex: 1; padding: 10px 4px; border-radius: 10px; border: 1px solid var(--vel-border);
+    background: #fff; font-size: 12px; font-weight: 700; text-align: center;
+    color: var(--vel-dark); cursor: pointer;
+  }
+  .t-btn.selected {
+    background: var(--vel-orange); color: #fff; border-color: var(--vel-orange);
+  }
+
+  /* Bouton PDF Contrat */
+  .btn-contract {
+    width: 100%; height: 48px; background: #fff; border: 2px solid var(--vel-dark);
+    border-radius: 14px; font-size: 13px; font-weight: 800; color: var(--vel-dark);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer; margin-top: 10px;
+  }
+  .btn-contract:active { background: #F0EAE1; }
+
+  /* Bouton Supprimer */
+  .btn-delete {
+    width: 100%; height: 44px; background: transparent; border: 1px solid var(--vel-danger);
+    border-radius: 14px; font-size: 13px; font-weight: 700; color: var(--vel-danger);
+    margin-top: 12px; cursor: pointer;
+  }
+
+  /* Vue Contrat Plein Écran (Mobile) */
+  #contractView {
+    display: none; position: fixed; inset: 0; background: #fff;
+    z-index: 300; overflow-y: auto; padding: 24px; color: #1A1A1A;
+  }
+
+  /* Barre Fixe Bas */
+  .bottom-save-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #fff; border-top: 1px solid var(--vel-border);
+    padding: 12px 18px; z-index: 150;
+  }
+  .btn-save-mobile {
+    width: 100%; height: 48px; background: var(--vel-gradient); border: none;
+    border-radius: 14px; color: #fff; font-size: 14px; font-weight: 800;
+    cursor: pointer; box-shadow: 0 4px 12px rgba(242,92,59,0.3);
+  }
+  .save-toast {
+    position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+    background: #1A1A1A; color: #fff; padding: 10px 18px; border-radius: 20px;
+    font-size: 12px; font-weight: 700; display: none; z-index: 200;
+  }
+</style>
+</head>
+<body>
+
+<div class="save-toast" id="toast">✓ Enregistré</div>
+
+<div class="top-bar">
+  <div class="brand-logo">VELUUME</div>
+  <div class="tag-season">ÉTÉ 2026</div>
+</div>
+
+<!-- VUE LISTE -->
+<div id="listView">
+  <div class="quick-stats">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-shops">0</div>
+      <div class="stat-lbl">Boutiques</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-fans">0</div>
+      <div class="stat-lbl">Éventails</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-ca">0 €</div>
+      <div class="stat-lbl">Total TTC B2B</div>
+    </div>
+  </div>
+
+  <div class="btn-add-store" onclick="createNewStore()">
+    <span>+</span> Ajouter une nouvelle boutique
+  </div>
+
+  <div class="filters">
+    <select id="regSelect" onchange="renderList()">
+      <option value="ALL">📍 Toutes les régions</option>
+      <option value="Corse">1. Corse (Score 100)</option>
+      <option value="Provence-Alpes-Côte d'Azur">2. PACA (Score Très Élevé)</option>
+      <option value="Poitou-Charentes">3. Poitou-Charentes (Score 94)</option>
+      <option value="Languedoc-Roussillon">4. Languedoc-Roussillon (Score 93)</option>
+      <option value="Limousin">5. Limousin (Score 93)</option>
+      <option value="Bourgogne">6. Bourgogne (Score 90)</option>
+    </select>
+    <input type="text" id="srch" placeholder="🔍 Rechercher enseigne, ville..." oninput="renderList()">
+  </div>
+
+  <div class="list-view" id="storesContainer"></div>
+</div>
+
+<!-- VUE DÉTAIL / MODIFICATION / AJOUT -->
+<div class="detail-view" id="detailView">
+  <div class="detail-header">
+    <div class="btn-back" onclick="closeDetail()">← Retour liste</div>
+    <span class="tag-season" id="detRegionTag">Région</span>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-title">1. Informations Boutique</div>
+    <div class="form-group">
+      <label>Nom de l'enseigne</label>
+      <input type="text" id="mName" placeholder="Ex: Concept Store...">
+    </div>
+    <div class="form-group">
+      <label>Région</label>
+      <select id="mRegion">
+        <option value="Corse">Corse</option>
+        <option value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</option>
+        <option value="Poitou-Charentes">Poitou-Charentes</option>
+        <option value="Languedoc-Roussillon">Languedoc-Roussillon</option>
+        <option value="Limousin">Limousin</option>
+        <option value="Bourgogne">Bourgogne</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Ville</label>
+      <input type="text" id="mCity" placeholder="Ex: Ajaccio, Nice...">
+    </div>
+    <div class="form-group">
+      <label>Adresse postale</label>
+      <input type="text" id="mAddress" placeholder="Adresse complète">
+    </div>
+    <div class="form-group">
+      <label>Typologie</label>
+      <input type="text" id="mType" placeholder="Concept store, Paillote, etc.">
+    </div>
+    <div class="form-group">
+      <label>Contact / Tél / Responsable</label>
+      <input type="text" id="mContact" placeholder="06... / Nom du gérant">
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-title">2. Commande Éventails Veluume</div>
+    <div class="form-group">
+      <label>Mode de commande</label>
+      <div class="toggle-row">
+        <div class="t-btn" id="mode-20" onclick="setMode('pack20')">Pack 20 + Présentoir</div>
+        <div class="t-btn" id="mode-unit" onclick="setMode('unit')">À l'unité (sur-mesure)</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top: 10px;">
+      <label>Quantité commandée</label>
+      <input type="number" id="mQty" oninput="recalc()">
+    </div>
+    <div class="price-summary">
+      <div class="ps-block">
+        <div class="ps-num" id="mTotalAchatTTC">0 €</div>
+        <div class="ps-lbl">Achat B2B TTC (7 €/u)</div>
+      </div>
+      <div class="ps-block">
+        <div class="ps-num" id="mTotalReventeTTC">0 €</div>
+        <div class="ps-lbl">Revente TTC (12 €/u)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-title">3. Présentoir de comptoir carton</div>
+    <div class="toggle-row">
+      <div class="t-btn" id="plv-y" onclick="setPLV(true)">OUI (Livré)</div>
+      <div class="t-btn" id="plv-n" onclick="setPLV(false)">NON (Sans)</div>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-title">4. Paiement avant livraison</div>
+    <div class="toggle-row">
+      <div class="t-btn" id="pay-0" onclick="setPay(0)">0% payé</div>
+      <div class="t-btn" id="pay-50" onclick="setPay(50)">50% payé</div>
+      <div class="t-btn" id="pay-100" onclick="setPay(100)">100% payé</div>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-title">5. Notes commerciales & Contrat</div>
+    <div class="form-group">
+      <label>Commentaires / Suivi</label>
+      <input type="text" id="mNotes" placeholder="Notes de visite...">
+    </div>
+    
+    <button class="btn-contract" onclick="showContractView()">
+      📄 Générer le Contrat d'Engagement (PDF)
+    </button>
+  </div>
+
+  <button class="btn-delete" id="btnDeleteStore" onclick="deleteCurrentStore()">
+    🗑️ Supprimer cette boutique
+  </button>
+</div>
+
+<div class="bottom-save-bar" id="saveBar" style="display:none;">
+  <button class="btn-save-mobile" onclick="saveStoreData()">Enregistrer la boutique</button>
+</div>
+
+<!-- VUE CONTRAT SIGNABLE PLEIN ÉCRAN -->
+<div id="contractView">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <button onclick="closeContractView()" style="background:#f0f0f0; border:none; padding:8px 14px; border-radius:20px; font-weight:700; cursor:pointer;">← Retour fiche</button>
+    <button onclick="window.print()" style="background:var(--vel-orange); color:#fff; border:none; padding:8px 18px; border-radius:20px; font-weight:800; cursor:pointer;">🖨️ Imprimer / PDF</button>
+  </div>
+  <div id="contractContent"></div>
+</div>
+
+<script>
+let stores = [
+  { id: 1, name: "cōcō concept store", region: "Corse", city: "Ajaccio", address: "Av. du Premier Consul, Ajaccio", type: "Concept Store Mode", qty: 20, plv: true, payment: 50, contact: "06 12 34 56 78", notes: "Comptoir caisse" },
+  { id: 2, name: "MOOD Ajaccio", region: "Corse", city: "Ajaccio", address: "Rue Fesch, Ajaccio", type: "Prêt-à-porter", qty: 40, plv: true, payment: 100, contact: "Direction", notes: "Rue piétonne" },
+  { id: 3, name: "Boutique Aimée", region: "Corse", city: "Ajaccio", address: "Rue des Trois Maries, Ajaccio", type: "Cadeaux", qty: 20, plv: true, payment: 0, contact: "", notes: "Achat d'impulsion" },
+  { id: 4, name: "Paillote Sanguinaires", region: "Corse", city: "Ajaccio", address: "Route des Sanguinaires", type: "Beach Club", qty: 20, plv: true, payment: 100, contact: "", notes: "Bar de plage" },
+  { id: 5, name: "Concept Store Haute Ville", region: "Corse", city: "Porto-Vecchio", address: "Haute Ville", type: "Créateurs", qty: 20, plv: true, payment: 50, contact: "", notes: "Touristes été" },
+  { id: 6, name: "Boutique Port / Marina", region: "Corse", city: "Bonifacio", address: "Quai Comparetti", type: "Mode Chic", qty: 20, plv: true, payment: 50, contact: "", notes: "Quai principal" },
+  { id: 7, name: "Boutique Citadelle", region: "Corse", city: "Calvi", address: "Citadelle", type: "Tourisme", qty: 15, plv: false, payment: 0, contact: "", notes: "Unitaire sans PLV" },
+  { id: 8, name: "Mon Œil", region: "Provence-Alpes-Côte d'Azur", city: "Nice", address: "Rue Bonaparte", type: "Mode", qty: 20, plv: true, payment: 50, contact: "", notes: "Quartier Port" },
+  { id: 9, name: "Mellli Mello", region: "Provence-Alpes-Côte d'Azur", city: "Nice", address: "Rue Préfecture", type: "Accessoires", qty: 20, plv: true, payment: 0, contact: "", notes: "Vieux-Nice" },
+  { id: 10, name: "Le Shop 17", region: "Provence-Alpes-Côte d'Azur", city: "Cannes", address: "Rue Notre-Dame", type: "Concept Store", qty: 20, plv: true, payment: 50, contact: "", notes: "Proche Croisette" },
+  { id: 11, name: "Mood Concept Store", region: "Provence-Alpes-Côte d'Azur", city: "Saint-Tropez", address: "Place Celli", type: "Beachwear", qty: 20, plv: true, payment: 100, contact: "", notes: "Clientèle prestige" },
+  { id: 12, name: "Natives Concept Store", region: "Provence-Alpes-Côte d'Azur", city: "Aix-en-Provence", address: "Rue Fauchier", type: "Créateurs", qty: 20, plv: true, payment: 0, contact: "", notes: "Centre chaud" },
+  { id: 13, name: "Etc... A Concept Store", region: "Poitou-Charentes", city: "La Rochelle", address: "Rue Saint-Nicolas", type: "Artisanat", qty: 20, plv: true, payment: 50, contact: "", notes: "Vieux-Port" },
+  { id: 14, name: "Boutique Plage St-Martin", region: "Poitou-Charentes", city: "Île de Ré", address: "Port St-Martin", type: "Beach Chic", qty: 20, plv: true, payment: 100, contact: "", notes: "Île de Ré" },
+  { id: 15, name: "Foliae Concept Store", region: "Poitou-Charentes", city: "Poitiers", address: "Rue Gambetta", type: "Design", qty: 10, plv: false, payment: 0, contact: "", notes: "Unitaire test" },
+  { id: 16, name: "Mazette Shop", region: "Languedoc-Roussillon", city: "Montpellier", address: "Écusson", type: "Déco d'Été", qty: 20, plv: true, payment: 50, contact: "", notes: "Zone piétonne" },
+  { id: 17, name: "Boutique Remparts", region: "Languedoc-Roussillon", city: "Aigues-Mortes", address: "Intra-muros", type: "Accessoires", qty: 20, plv: true, payment: 0, contact: "", notes: "Touristique" },
+  { id: 18, name: "La Manufacture Française", region: "Limousin", city: "Limoges", address: "Rue Boucherie", type: "Objets Singuliers & Cadeaux", qty: 10, plv: false, payment: 0, contact: "", notes: "Quartier historique" },
+  { id: 19, name: "Concept Store Centre", region: "Limousin", city: "Brive", address: "Centre piéton", type: "Mode & Maison", qty: 10, plv: false, payment: 0, contact: "", notes: "Test sélectif" },
+  { id: 20, name: "Concept Store Hospices", region: "Bourgogne", city: "Beaune", address: "Place Carnot", type: "Art de Vivre", qty: 10, plv: false, payment: 100, contact: "", notes: "Tourisme international" }
+];
+
+let activeStoreId = null;
+
+function updateHeaderStats() {
+  const count = stores.length;
+  const fans = stores.reduce((acc, s) => acc + (parseInt(s.qty) || 0), 0);
+  const totalAchatTTC = fans * 7.00;
+  document.getElementById('stat-shops').innerText = count;
+  document.getElementById('stat-fans').innerText = fans;
+  document.getElementById('stat-ca').innerText = totalAchatTTC.toLocaleString('fr-FR') + ' €';
+}
+
+function renderList() {
+  const reg = document.getElementById('regSelect').value;
+  const q = document.getElementById('srch').value.toLowerCase();
+  const c = document.getElementById('storesContainer');
+  c.innerHTML = '';
+
+  const filtered = stores.filter(s => {
+    const matchReg = (reg === 'ALL' || s.region === reg);
+    const matchQ = (s.name || '').toLowerCase().includes(q) || (s.city || '').toLowerCase().includes(q);
+    return matchReg && matchQ;
+  });
+
+  filtered.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'store-item';
+    d.onclick = () => openDetail(s.id);
+    d.innerHTML = `
+      <div>
+        <div class="s-name">${s.name}</div>
+        <div class="s-sub">${s.city} • ${s.type}</div>
+        <div class="s-badge">${s.qty} éventails • ${s.payment}% payé • ${s.plv ? 'Avec présentoir' : 'Sans prés.'}</div>
+      </div>
+      <div style="color:var(--vel-orange); font-size:18px; font-weight:800;">›</div>
+    `;
+    c.appendChild(d);
+  });
+  updateHeaderStats();
+}
+
+function openDetail(id) {
+  activeStoreId = id;
+  const s = stores.find(x => x.id === id);
+  if (!s) return;
+
+  document.getElementById('detRegionTag').innerText = s.region;
+  document.getElementById('mName').value = s.name;
+  document.getElementById('mRegion').value = s.region;
+  document.getElementById('mCity').value = s.city;
+  document.getElementById('mAddress').value = s.address;
+  document.getElementById('mType').value = s.type;
+  document.getElementById('mContact').value = s.contact || '';
+  document.getElementById('mQty').value = s.qty;
+  document.getElementById('mNotes').value = s.notes || '';
+
+  if (s.qty % 20 === 0 && s.plv) {
+    setMode('pack20');
+  } else {
+    setMode('unit');
+  }
+
+  setPLV(s.plv);
+  setPay(s.payment);
+  recalc();
+
+  document.getElementById('btnDeleteStore').style.display = 'block';
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('detailView').style.display = 'block';
+  document.getElementById('saveBar').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function createNewStore() {
+  activeStoreId = Date.now();
+  document.getElementById('detRegionTag').innerText = 'Nouvelle Boutique';
+  document.getElementById('mName').value = '';
+  document.getElementById('mRegion').value = 'Corse';
+  document.getElementById('mCity').value = '';
+  document.getElementById('mAddress').value = '';
+  document.getElementById('mType').value = 'Concept Store Mode';
+  document.getElementById('mContact').value = '';
+  document.getElementById('mQty').value = 20;
+  document.getElementById('mNotes').value = '';
+
+  setMode('pack20');
+  setPLV(true);
+  setPay(0);
+  recalc();
+
+  document.getElementById('btnDeleteStore').style.display = 'none';
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('detailView').style.display = 'block';
+  document.getElementById('saveBar').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function closeDetail() {
+  document.getElementById('detailView').style.display = 'none';
+  document.getElementById('saveBar').style.display = 'none';
+  document.getElementById('listView').style.display = 'block';
+  renderList();
+}
+
+function setMode(mode) {
+  const m20 = document.getElementById('mode-20');
+  const mUnit = document.getElementById('mode-unit');
+  if (mode === 'pack20') {
+    m20.classList.add('selected');
+    mUnit.classList.remove('selected');
+    document.getElementById('mQty').value = 20;
+    setPLV(true);
+  } else {
+    mUnit.classList.add('selected');
+    m20.classList.remove('selected');
+  }
+  recalc();
+}
+
+function recalc() {
+  const q = parseInt(document.getElementById('mQty').value) || 0;
+  const achatTTC = (q * 7.00).toFixed(2);
+  const reventeTTC = (q * 12.00).toFixed(2);
+  document.getElementById('mTotalAchatTTC').innerText = achatTTC + ' €';
+  document.getElementById('mTotalReventeTTC').innerText = reventeTTC + ' €';
+}
+
+let curPLV = true;
+function setPLV(val) {
+  curPLV = val;
+  document.getElementById('plv-y').className = 't-btn' + (val ? ' selected' : '');
+  document.getElementById('plv-n').className = 't-btn' + (!val ? ' selected' : '');
+}
+
+let curPay = 0;
+function setPay(val) {
+  curPay = val;
+  document.getElementById('pay-0').className = 't-btn' + (val === 0 ? ' selected' : '');
+  document.getElementById('pay-50').className = 't-btn' + (val === 50 ? ' selected' : '');
+  document.getElementById('pay-100').className = 't-btn' + (val === 100 ? ' selected' : '');
+}
+
+function saveStoreData() {
+  const name = document.getElementById('mName').value.trim() || 'Boutique sans nom';
+  const region = document.getElementById('mRegion').value;
+  const city = document.getElementById('mCity').value.trim();
+  const address = document.getElementById('mAddress').value.trim();
+  const type = document.getElementById('mType').value.trim();
+  const contact = document.getElementById('mContact').value.trim();
+  const qty = parseInt(document.getElementById('mQty').value) || 0;
+  const notes = document.getElementById('mNotes').value.trim();
+
+  let existing = stores.find(x => x.id === activeStoreId);
+  if (existing) {
+    existing.name = name;
+    existing.region = region;
+    existing.city = city;
+    existing.address = address;
+    existing.type = type;
+    existing.contact = contact;
+    existing.qty = qty;
+    existing.plv = curPLV;
+    existing.payment = curPay;
+    existing.notes = notes;
+  } else {
+    stores.unshift({
+      id: activeStoreId,
+      name, region, city, address, type, contact, qty,
+      plv: curPLV, payment: curPay, notes
+    });
+  }
+
+  showToast('✓ Boutique enregistrée');
+  setTimeout(() => { closeDetail(); }, 600);
+}
+
+function deleteCurrentStore() {
+  if (confirm('Confirmer la suppression de cette boutique ?')) {
+    stores = stores.filter(x => x.id !== activeStoreId);
+    showToast('Boutique supprimée');
+    closeDetail();
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2000);
+}
+
+/* Affichage du contrat plein écran avec anti-blocage */
+function showContractView() {
+  const name = document.getElementById('mName').value || 'Boutique';
+  const address = document.getElementById('mAddress').value || 'Non renseignée';
+  const city = document.getElementById('mCity').value || '';
+  const contact = document.getElementById('mContact').value || 'Non renseigné';
+  const qty = parseInt(document.getElementById('mQty').value) || 0;
+  const totalTTC = (qty * 7.00).toFixed(2);
+  const payPercent = curPay;
+  const payPaid = ((totalTTC * payPercent) / 100).toFixed(2);
+  const payRemaining = (totalTTC - payPaid).toFixed(2);
+  const plvText = curPLV ? 'OUI (1 Présentoir de comptoir carton inclus)' : 'NON (Sans présentoir)';
+
+  const contractHTML = `
+    <div style="border-bottom:2px solid #F25C3B; padding-bottom:15px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:flex-start;">
+      <div>
+        <div style="font-size:24px; font-weight:900; letter-spacing:2px; color:#F25C3B;">VELUUME</div>
+        <div style="font-size:11px; text-transform:uppercase; color:#777; margin-top:2px;">Éventails de Collection • cltagora@gmail.com</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:14px; font-weight:800; text-transform:uppercase;">BON DE COMMANDE B2B</div>
+        <div style="font-size:12px; color:#666;">Date : ${new Date().toLocaleDateString('fr-FR')}</div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:20px;">
+      <div style="flex:1; border:1px solid #e0e0e0; border-radius:8px; padding:12px; background:#fafafa; font-size:12px;">
+        <strong style="color:#F25C3B; text-transform:uppercase; font-size:10px; display:block; margin-bottom:4px;">Fournisseur</strong>
+        <strong>VELUUME</strong><br>
+        Site : www.veluume.com<br>
+        Email : cltagora@gmail.com
+      </div>
+      <div style="flex:1; border:1px solid #e0e0e0; border-radius:8px; padding:12px; background:#fafafa; font-size:12px;">
+        <strong style="color:#F25C3B; text-transform:uppercase; font-size:10px; display:block; margin-bottom:4px;">Commerçant Revendeur</strong>
+        <strong>${name}</strong><br>
+        Adresse : ${address}, ${city}<br>
+        Contact : ${contact}
+      </div>
+    </div>
+
+    <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:12px;">
+      <thead>
+        <tr style="background:#1a1a1a; color:#fff;">
+          <th style="padding:8px 10px; text-align:left; font-size:10px; text-transform:uppercase;">Désignation</th>
+          <th style="padding:8px 10px; text-align:left; font-size:10px; text-transform:uppercase;">Conditionnement</th>
+          <th style="padding:8px 10px; text-align:center; font-size:10px; text-transform:uppercase;">Qté</th>
+          <th style="padding:8px 10px; text-align:right; font-size:10px; text-transform:uppercase;">P.U. TTC</th>
+          <th style="padding:8px 10px; text-align:right; font-size:10px; text-transform:uppercase;">Total TTC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px; border-bottom:1px solid #eee;"><strong>Éventail Veluume (Blind Box)</strong><br><small style="color:#666;">Structure bois naturel, motifs graphiques</small></td>
+          <td style="padding:10px; border-bottom:1px solid #eee;">${plvText}</td>
+          <td style="padding:10px; border-bottom:1px solid #eee; text-align:center;">${qty}</td>
+          <td style="padding:10px; border-bottom:1px solid #eee; text-align:right;">7,00 €</td>
+          <td style="padding:10px; border-bottom:1px solid #eee; text-align:right; font-weight:700;">${totalTTC} €</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="width:100%; max-width:280px; margin-left:auto; margin-bottom:25px; font-size:12px;">
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Total Commande TTC :</span> <span>${totalTTC} €</span></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Acompte réglé (${payPercent}%) :</span> <span>${payPaid} €</span></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; font-weight:800; font-size:14px; border-top:1px solid #1a1a1a; color:#F25C3B;"><span>Solde restant dû :</span> <span>${payRemaining} €</span></div>
+    </div>
+
+    <div style="background:#FFF7F4; border-left:4px solid #F25C3B; padding:12px; border-radius:4px; font-size:11px; margin-bottom:30px; line-height:1.4;">
+      <strong>ENGAGEMENT DU COMMERÇANT REVENDEUR :</strong><br>
+      Je soussigné(e), représentant légal de l'enseigne <strong>${name}</strong>, reconnais passer commande ferme de <strong>${qty} éventails Veluume</strong> au tarif convenu de <strong>${totalTTC} € TTC</strong>.<br>
+      • J'atteste avoir réglé la somme de <strong>${payPaid} € (${payPercent}%)</strong> ce jour.<br>
+      • Je m'engage expressément à régler le solde restant de <strong>${payRemaining} €</strong> à réception des produits ou selon les délais convenus.
+    </div>
+
+    <div style="display:flex; justify-content:space-between; gap:14px; margin-top:20px;">
+      <div style="flex:1; height:100px; border:1px dashed #aaa; border-radius:8px; padding:8px; font-size:10px; color:#555; text-transform:uppercase;">
+        Pour Veluume<br><br><span style="color:#aaa; text-transform:none;">Signature</span>
+      </div>
+      <div style="flex:1; height:100px; border:1px dashed #aaa; border-radius:8px; padding:8px; font-size:10px; color:#555; text-transform:uppercase;">
+        Pour le Commerçant (Lu et approuvé)<br><br><span style="color:#aaa; text-transform:none;">Signature & Cachet</span>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('contractContent').innerHTML = contractHTML;
+  document.getElementById('contractView').style.display = 'block';
+}
+
+function closeContractView() {
+  document.getElementById('contractView').style.display = 'none';
+}
+
+// Initialisation
+renderList();
+</script>
+</body>
+</html>
